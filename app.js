@@ -357,6 +357,11 @@ function renderGrid(box, results, emptyMsg) {
     card.onmouseenter = () => showMask(present);
     card.onmouseleave = clearMask;
     card.onclick = () => openCombo(combo, missing);
+    card.tabIndex = 0;
+    card.title = 'Open color details';
+    card.onkeydown = (e) => {
+      if (e.target === card && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openCombo(combo, missing); }
+    };
     frag.append(card);
   }
   box.append(frag);

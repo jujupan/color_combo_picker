@@ -122,9 +122,14 @@ button { font: inherit; }
 .grid > .hint { grid-column: 1 / -1; }
 .card {
   background: var(--card); border: 1px solid var(--line); border-radius: 8px;
-  padding: 10px; transition: border-color .15s;
+  padding: 10px; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
 }
-.card:hover { border-color: var(--muted); }
+.card:hover {
+  border-color: var(--muted); transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.10);
+}
+.card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
 .num { font: italic 14px var(--serif); color: var(--muted); }
 .share {
@@ -132,8 +137,6 @@ button { font: inherit; }
   border: 1px solid var(--line); background: none; color: var(--muted);
 }
 .share:hover { border-color: var(--accent); color: var(--accent); }
-
-.card { cursor: pointer; }
 
 .dlg {
   width: min(720px, calc(100vw - 32px)); max-height: calc(100vh - 32px);
