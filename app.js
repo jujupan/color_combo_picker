@@ -335,7 +335,7 @@ function renderGrid(box, results, emptyMsg) {
     const share = el('button', 'share', 'Copy image');
     share.type = 'button';
     share.title = 'Copy this combo as an image with its color codes';
-    share.onclick = () => shareCombo(combo, missing);
+    share.onclick = (e) => { e.stopPropagation(); shareCombo(combo, missing); };
     head.append(el('span', 'num', 'No. ' + String(combo.id).padStart(3, '0')), share);
     card.append(head);
     const bands = el('div', 'bands');
@@ -356,6 +356,7 @@ function renderGrid(box, results, emptyMsg) {
     const present = combo.colors.filter((j) => !missing.includes(j));
     card.onmouseenter = () => showMask(present);
     card.onmouseleave = clearMask;
+    card.onclick = () => openCombo(combo, missing);
     frag.append(card);
   }
   box.append(frag);
@@ -456,10 +457,68 @@ function shareCombo(combo, missing) {
   navigator.clipboard.write([item]).then(() => toast('Image copied. Paste it anywhere.'), fallback);
 }
 
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => toast('Copied ' + text), () => toast('Could not copy'));
+}
+
+// Same layout as the shared image, but live: click a code to copy it.
+function openCombo(combo, missing) {
+  const dlg = $('comboDialog');
+  const body = el('div', 'dlg-body');
+  const head = el('div', 'dlg-head');
+  const close = el('button', 'x', '×');
+  close.type = 'button';
+  close.setAttribute('aria-label', 'Close');
+  close.onclick = () => dlg.close();
+  head.append(el('span', 'num', 'No. ' + String(combo.id).padStart(3, '0')), close);
+
+  const bands = el('div', 'dlg-bands');
+  const rows = el('ul', 'dlg-rows');
+  for (const j of combo.colors) {
+    const isMissing = missing.includes(j);
+    const band = el('div', 'band');
+    band.style.background = WCOLORS[j].hex;
+    bands.append(band);
+
+    const li = el('li');
+    const sw = el('i', 'sw');
+    sw.style.background = WCOLORS[j].hex;
+    const name = el('span', 'nm', WCOLORS[j].name);
+    if (isMissing) name.append(el('b', 'need', 'NEED'));
+    const codes = el('span', 'codes');
+    for (const code of [WCOLORS[j].hex.toUpperCase(), cmykLabel(j)]) {
+      const b = el('button', 'code', code);
+      b.type = 'button';
+      b.title = 'Copy';
+      b.onclick = () => copyText(code);
+      codes.append(b);
+    }
+    li.append(sw, name, codes);
+    rows.append(li);
+  }
+
+  const actions = el('div', 'dlg-actions');
+  const share = el('button', 'share', 'Copy image');
+  share.type = 'button';
+  share.onclick = () => shareCombo(combo, missing);
+  actions.append(share);
+
+  body.append(head, bands, rows, actions);
+  dlg.replaceChildren(body);
+  dlg.showModal();
+}
+
+$('comboDialog').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.close(); // backdrop click
+});
+
 let toastTimer = 0;
 function toast(msg) {
   let t = $('toast');
-  if (!t) { t = el('div', 'toast'); t.id = 'toast'; document.body.append(t); }
+  if (!t) { t = el('div', 'toast'); t.id = 'toast'; }
+  // An open modal dialog sits in the top layer, so the toast must live inside it to be seen.
+  const host = document.querySelector('dialog[open]') || document.body;
+  if (t.parentNode !== host) host.append(t);
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(toastTimer);
