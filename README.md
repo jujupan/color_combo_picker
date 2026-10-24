@@ -17,6 +17,6 @@ Upload a photo of fabric scraps. The app shows which of the 348 combinations fro
 - **Clicking the photo** shows the closest book colors. Use "I have it" to add a color the detector missed.
 
 ## Data
-`data/colors.json` comes from https://github.com/mattdesl/dictionary-of-colour-combinations.
+`data/colors.json` comes from https://github.com/mattdesl/dictionary-of-colour-combinations (MIT License, © 2020 Matt DesLauriers, see `data/LICENSE-colors.md`).
 It was spot-checked against the scanned PDF (combos 7, 8, 183, 184, 290).
 `python3 build_data.py` regenerates `data/wada.js` from it.
