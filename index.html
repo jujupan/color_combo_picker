@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scrap Combo Picker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Scrap Combo Picker</h1>
+    <p class="sub">Upload a photo of your fabric scraps to see which of the 348 combinations from Sanzo Wada’s <em>A Dictionary of Color Combinations</em> you can make, and which ones are one color away.</p>
+  </header>
+
+  <main>
+    <section class="left">
+      <label id="drop" class="drop">
+        <input id="file" type="file" accept="image/*" hidden>
+        <span class="drop-msg">Drop a photo here or <u>choose a file</u></span>
+      </label>
+      <div id="stage" class="stage" hidden>
+        <canvas id="photo"></canvas>
+        <canvas id="overlay"></canvas>
+        <div id="pop" class="pop" hidden></div>
+      </div>
+      <p id="hint" class="hint" hidden>Click the photo to identify a color. Hover over a chip or combo to see where it matches.</p>
+
+      <div id="controls" class="controls" hidden>
+        <div class="row">
+          <label for="tol">Match tolerance <output id="tolOut"></output></label>
+          <input id="tol" type="range" min="3" max="20" step="0.5" value="8">
+        </div>
+        <div class="row">
+          <label for="cov">Min. amount of each color <output id="covOut"></output></label>
+          <input id="cov" type="range" min="0.1" max="5" step="0.1" value="0.4">
+        </div>
+        <div class="row buttons">
+          <button id="wbBtn" type="button" title="Then click something white or light gray in the photo to correct the lighting">Set white point</button>
+          <button id="wbReset" type="button" hidden>Reset white point</button>
+          <button id="newPhoto" type="button">New photo</button>
+        </div>
+      </div>
+
+      <div id="paletteBox" hidden>
+        <h2>Colors found <span class="count" id="palCount"></span></h2>
+        <p class="hint">Click a chip to ignore it (for example, your tabletop).</p>
+        <div id="palette" class="chips"></div>
+      </div>
+    </section>
+
+    <section class="right">
+      <div id="empty" class="empty">
+        <p>Tip: lay the scraps on a plain white or gray surface, use daylight, and avoid strong shadows.</p>
+      </div>
+      <div id="results" hidden>
+        <div class="filters">
+          <span>Combo size:</span>
+          <label><input type="checkbox" name="size" value="2" checked> 2</label>
+          <label><input type="checkbox" name="size" value="3" checked> 3</label>
+          <label><input type="checkbox" name="size" value="4" checked> 4</label>
+        </div>
+
+        <h2>You can make <span class="count" id="haveCount"></span></h2>
+        <div id="have" class="grid"></div>
+
+        <h2>Missing one color <span class="count" id="nearCount"></span></h2>
+        <div id="shop" class="shop"></div>
+        <div id="near" class="grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Color data from the open digitization of the book (<a href="https://github.com/mattdesl/dictionary-of-colour-combinations">mattdesl/dictionary-of-colour-combinations</a>). Screen swatches only approximate the printed inks.</footer>
+
+  <script src="data/wada.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
