@@ -331,7 +331,13 @@ function renderGrid(box, results, emptyMsg) {
   const frag = document.createDocumentFragment();
   for (const { combo, missing } of results) {
     const card = el('article', 'card');
-    card.append(el('div', 'num', 'No. ' + String(combo.id).padStart(3, '0')));
+    const head = el('div', 'card-head');
+    const share = el('button', 'share', 'Copy image');
+    share.type = 'button';
+    share.title = 'Copy this combo as an image with its color codes';
+    share.onclick = () => shareCombo(combo, missing);
+    head.append(el('span', 'num', 'No. ' + String(combo.id).padStart(3, '0')), share);
+    card.append(head);
     const bands = el('div', 'bands');
     const names = el('ul', 'names');
     for (const j of combo.colors) {
@@ -353,6 +359,111 @@ function renderGrid(box, results, emptyMsg) {
     frag.append(card);
   }
   box.append(frag);
+}
+
+// ---------- sharing ----------
+
+function cmykLabel(j) {
+  const [c, m, y, k] = WCOLORS[j].cmyk;
+  return `C${c} M${m} Y${y} K${k}`;
+}
+
+async function comboImage(combo, missing, type) {
+  await Promise.all(['italic 34px', '500 30px'].map((f) => document.fonts.load(f + ' "EB Garamond"'))).catch(() => {});
+  const W = 1200, pad = 64, headH = 64, bandH = 520, rowH = 66, footH = 84;
+  const n = combo.colors.length;
+  const H = pad + headH + bandH + 28 + n * rowH + footH;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const x = cv.getContext('2d');
+  const serif = '"EB Garamond", Georgia, serif', sans = '-apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
+
+  x.fillStyle = '#f6f3ec';
+  x.fillRect(0, 0, W, H);
+  x.fillStyle = '#7a756b';
+  x.font = `italic 34px ${serif}`;
+  x.fillText('No. ' + String(combo.id).padStart(3, '0'), pad, pad + 32);
+
+  const bw = (W - 2 * pad) / n;
+  combo.colors.forEach((j, i) => {
+    x.fillStyle = WCOLORS[j].hex;
+    x.fillRect(Math.round(pad + i * bw), pad + headH, Math.ceil(bw), bandH);
+  });
+
+  let y = pad + headH + bandH + 28;
+  for (const j of combo.colors) {
+    const mid = y + rowH / 2;
+    x.beginPath();
+    x.arc(pad + 18, mid, 18, 0, TAU);
+    x.fillStyle = WCOLORS[j].hex;
+    x.fill();
+    x.strokeStyle = 'rgba(0,0,0,.15)';
+    x.lineWidth = 1.5;
+    x.stroke();
+    x.textBaseline = 'middle';
+    x.textAlign = 'left';
+    x.fillStyle = '#2b2925';
+    x.font = `500 32px ${serif}`;
+    x.fillText(WCOLORS[j].name, pad + 54, mid);
+    if (missing.includes(j)) {
+      const w = x.measureText(WCOLORS[j].name).width;
+      x.fillStyle = '#8a3b2e';
+      x.font = `600 20px ${sans}`;
+      x.fillText('NEED', pad + 54 + w + 16, mid + 1);
+    }
+    x.textAlign = 'right';
+    x.fillStyle = '#5c574e';
+    x.font = `22px ui-monospace, Menlo, Consolas, monospace`;
+    x.fillText(`${WCOLORS[j].hex.toUpperCase()}   ${cmykLabel(j)}`, W - pad, mid);
+    x.fillStyle = '#e2ddd2';
+    x.fillRect(pad, y + rowH - 1, W - 2 * pad, 1);
+    y += rowH;
+  }
+
+  x.textAlign = 'left';
+  x.textBaseline = 'alphabetic';
+  x.fillStyle = '#7a756b';
+  x.font = `italic 24px ${serif}`;
+  x.fillText('A Dictionary of Color Combinations · Sanzo Wada', pad, H - pad + 16);
+  if (location.protocol.startsWith('http')) {
+    x.textAlign = 'right';
+    x.font = `20px ${sans}`;
+    x.fillText(location.host + location.pathname.replace(/index\.html$/, ''), W - pad, H - pad + 14);
+  }
+  return new Promise((resolve) => cv.toBlob(resolve, type, 0.92));
+}
+
+// Browsers only put PNG on the clipboard; where that isn't allowed, fall back
+// to the share sheet (phones) or a JPEG download.
+function shareCombo(combo, missing) {
+  const name = `wada-combo-${String(combo.id).padStart(3, '0')}.jpg`;
+  const fallback = async () => {
+    const blob = await comboImage(combo, missing, 'image/jpeg');
+    const file = new File([blob], name, { type: 'image/jpeg' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file] }); return; } catch (e) { if (e.name === 'AbortError') return; }
+    }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast('Saved ' + name);
+  };
+  if (!navigator.clipboard || !window.ClipboardItem) { fallback(); return; }
+  // The ClipboardItem must be created synchronously inside the click for Safari.
+  const item = new ClipboardItem({ 'image/png': comboImage(combo, missing, 'image/png') });
+  navigator.clipboard.write([item]).then(() => toast('Image copied. Paste it anywhere.'), fallback);
+}
+
+let toastTimer = 0;
+function toast(msg) {
+  let t = $('toast');
+  if (!t) { t = el('div', 'toast'); t.id = 'toast'; document.body.append(t); }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
 }
 
 // ---------- photo overlay ----------

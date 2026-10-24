@@ -125,7 +125,20 @@ button { font: inherit; }
   padding: 10px; transition: border-color .15s;
 }
 .card:hover { border-color: var(--muted); }
-.num { font: italic 14px var(--serif); color: var(--muted); margin-bottom: 6px; }
+.card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.num { font: italic 14px var(--serif); color: var(--muted); }
+.share {
+  font-size: 11.5px; padding: 2px 9px; border-radius: 99px; cursor: pointer;
+  border: 1px solid var(--line); background: none; color: var(--muted);
+}
+.share:hover { border-color: var(--accent); color: var(--accent); }
+
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); z-index: 20;
+  background: var(--ink); color: var(--paper); padding: 9px 16px; border-radius: 8px;
+  font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
 .bands { display: flex; height: 84px; border-radius: 4px; overflow: hidden; }
 .band { flex: 1; position: relative; }
 .band.missing {

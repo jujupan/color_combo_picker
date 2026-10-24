@@ -20,7 +20,7 @@ for i, c in enumerate(colors):
         combos[n].append(i)
 
 out = {
-    "colors": [{"name": c["name"], "hex": c["hex"]} for c in colors],
+    "colors": [{"name": c["name"], "hex": c["hex"], "cmyk": c["cmyk"]} for c in colors],
     "combos": [{"id": n, "colors": combos[n]} for n in sorted(combos)],
 }
 (here / "data" / "wada.js").write_text(
