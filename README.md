@@ -3,7 +3,9 @@
 Upload a photo of fabric scraps. The app shows which of the 348 combinations from Sanzo Wada's
 *A Dictionary of Color Combinations* you can make, and which ones are missing only one color.
 
-**Run it:** open `index.html` in a browser. No server or install is needed, and the photo stays on your computer.
+**Try it:** https://jujupan.github.io/color_combo_picker/
+
+**Run it locally:** open `index.html` in a browser. No server or install is needed, and the photo stays on your computer.
 
 ## How it works
 - The photo is shrunk to about 240px. Edge pixels, where two scraps meet, are skipped.
