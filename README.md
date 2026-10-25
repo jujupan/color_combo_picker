@@ -16,6 +16,15 @@ Upload a photo of fabric scraps. The app shows which of the 348 combinations fro
 - **Ignoring** a chip, such as your tabletop, drops every pixel whose best match is that color.
 - **Clicking the photo** shows the closest book colors. Use "I have it" to add a color the detector missed.
 
+## My fabrics (patterned scraps)
+- Add fabrics by photographing each one close up ("Add fabric photos", several at once), or by dragging a box
+  around a scrap in the pile photo. They're saved in this browser (localStorage).
+- Each fabric is measured color by color, for example 60% Pale Lemon Yellow and 40% Vistoris Lake for a stripe.
+- In **My fabrics** mode, a fabric can join a combo only if at least the **fabric fit** share of it (default 65%)
+  is in that combo's colors. Busy prints with off-palette colors are left out.
+- A fabric that can join then supplies every combo color that makes up at least 15% of it, so one stripe can
+  cover two colors. Each combo shows which fabrics supply each color.
+
 ## Data
 `data/colors.json` comes from https://github.com/mattdesl/dictionary-of-colour-combinations (MIT License, © 2020 Matt DesLauriers, see `data/LICENSE-colors.md`).
 It was spot-checked against the scanned PDF (combos 7, 8, 183, 184, 290).

@@ -6,7 +6,7 @@
   <title>Scrap Combo Picker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap">
-  <link rel="stylesheet" href="style.css?v=202610241434">
+  <link rel="stylesheet" href="style.css?v=202610242225">
 </head>
 <body>
   <header>
@@ -18,25 +18,29 @@
     <section class="left">
       <label id="drop" class="drop">
         <input id="file" type="file" accept="image/*" hidden>
-        <span class="drop-msg">Drop a photo here or <u>choose a file</u></span>
+        <span class="drop-msg">Drop a photo of your scrap pile here or <u>choose a file</u></span>
       </label>
       <div id="stage" class="stage" hidden>
         <canvas id="photo"></canvas>
         <canvas id="overlay"></canvas>
         <div id="pop" class="pop" hidden></div>
       </div>
-      <p id="hint" class="hint" hidden>Click the photo to identify a color. Hover over a chip or combo to see where it matches.</p>
+      <p id="hint" class="hint" hidden>Click the photo to identify a color. Drag a box around a scrap to save it as a fabric. Hover over a chip or combo to see where it matches.</p>
 
       <div id="controls" class="controls" hidden>
         <div class="row">
           <label for="tol">Match tolerance <output id="tolOut"></output></label>
           <input id="tol" type="range" min="3" max="20" step="0.5" value="8">
         </div>
-        <div class="row">
+        <div class="row" id="covRow">
           <label for="cov">Min. amount of each color <output id="covOut"></output></label>
           <input id="cov" type="range" min="0.1" max="5" step="0.1" value="0.4">
         </div>
-        <div class="row buttons">
+        <div class="row" id="fitRow" hidden>
+          <label for="fit" title="How much of each fabric must be made of the combo's colors. Lower it to allow busier prints.">Fabric fit <output id="fitOut"></output></label>
+          <input id="fit" type="range" min="30" max="100" step="5" value="65">
+        </div>
+        <div class="row buttons" id="photoButtons">
           <button id="wbBtn" type="button" title="Then click something white or light gray in the photo to correct the lighting">Set white point</button>
           <button id="wbReset" type="button" hidden>Reset white point</button>
           <button id="newPhoto" type="button">New photo</button>
@@ -48,14 +52,29 @@
         <p class="hint">Click a chip to ignore it (for example, your tabletop).</p>
         <div id="palette" class="chips"></div>
       </div>
+
+      <div id="fabricBox" class="fabric-box">
+        <h2>My fabrics <span class="count" id="fabCount"></span></h2>
+        <p class="hint">Photograph each fabric close up so it fills the frame, or drag a box around a scrap in the photo above. Patterned fabrics are measured color by color. Saved in this browser.</p>
+        <div class="buttons">
+          <button id="addFabric" type="button">Add fabric photos</button>
+        </div>
+        <input id="fabFile" type="file" accept="image/*" multiple hidden>
+        <div id="fabrics" class="fabrics"></div>
+      </div>
     </section>
 
     <section class="right">
       <div id="empty" class="empty">
-        <p>Tip: lay the scraps on a plain white or gray surface, use daylight, and avoid strong shadows.</p>
+        <p>Start with a photo of your scrap pile, or build a library of your fabrics one by one.</p>
+        <p>Tip: use daylight, avoid strong shadows, and for a pile, lay the scraps on a plain white or gray surface.</p>
       </div>
       <div id="results" hidden>
         <div class="filters">
+          <div class="seg" id="sourceSeg" role="group" aria-label="Find combos from">
+            <button type="button" data-source="photo">Pile photo</button>
+            <button type="button" data-source="fabrics">My fabrics</button>
+          </div>
           <span>Combo size:</span>
           <label><input type="checkbox" name="size" value="2" checked> 2</label>
           <label><input type="checkbox" name="size" value="3" checked> 3</label>
@@ -76,7 +95,7 @@
 
   <footer>Color data from the open digitization of the book (<a href="https://github.com/mattdesl/dictionary-of-colour-combinations">mattdesl/dictionary-of-colour-combinations</a>). Screen swatches only approximate the printed inks.</footer>
 
-  <script src="data/wada.js?v=202610241434"></script>
-  <script src="app.js?v=202610241434"></script>
+  <script src="data/wada.js?v=202610242225"></script>
+  <script src="app.js?v=202610242225"></script>
 </body>
 </html>

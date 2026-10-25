@@ -61,7 +61,7 @@ main {
 
 .stage { position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--line); line-height: 0; }
 .stage canvas { width: 100%; height: auto; display: block; }
-#overlay { position: absolute; inset: 0; height: 100%; cursor: crosshair; }
+#overlay { position: absolute; inset: 0; height: 100%; cursor: crosshair; touch-action: none; }
 .stage.picking { outline: 3px solid var(--accent); }
 
 .pop {
@@ -85,7 +85,7 @@ main {
 .controls label { display: flex; justify-content: space-between; font-size: 13px; }
 .controls output { color: var(--muted); }
 .controls input[type=range] { width: 100%; accent-color: var(--accent); }
-.buttons { display: flex !important; flex-wrap: wrap; gap: 8px; }
+.buttons, .controls .row.buttons { display: flex; flex-wrap: wrap; gap: 8px; }
 button { font: inherit; }
 .buttons button {
   padding: 5px 12px; border-radius: 6px; border: 1px solid var(--line);
@@ -111,7 +111,54 @@ button { font: inherit; }
 
 .empty { color: var(--muted); padding: 40px 0; max-width: 460px; }
 
-.filters { display: flex; gap: 14px; align-items: center; color: var(--muted); margin-bottom: 18px; font-size: 13px; }
+.filters { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; color: var(--muted); margin-bottom: 18px; font-size: 13px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; margin-right: 8px; }
+.seg button {
+  border: 0; background: var(--card); color: var(--ink); padding: 5px 12px; cursor: pointer; font-size: 13px;
+}
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button.active { background: var(--ink); color: var(--paper); }
+.seg button:disabled { color: var(--muted); opacity: .5; cursor: default; }
+
+.fabric-box { margin-top: 28px; border-radius: 10px; }
+.fabric-box.dragging { outline: 2px dashed var(--accent); outline-offset: 6px; }
+.fabrics { display: grid; gap: 8px; margin-top: 12px; }
+.fab {
+  display: flex; gap: 10px; align-items: center; padding: 6px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--card); transition: border-color .15s, box-shadow .15s;
+}
+.fab.off { opacity: .5; }
+.fab.lit { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.fab img { width: 56px; height: 56px; object-fit: cover; border-radius: 5px; flex: none; }
+.fab-info { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.fab-name {
+  font: inherit; font-size: 13px; color: var(--ink); background: none; width: 100%;
+  border: 1px solid transparent; border-radius: 4px; padding: 1px 4px; margin-left: -5px;
+}
+.fab-name:hover, .fab-name:focus { border-color: var(--line); outline: none; }
+.fab-bar { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--line); }
+.fab-bar i { flex-basis: 0; }
+.fab-colors { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fab-actions { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.fab-actions input { accent-color: var(--accent); cursor: pointer; }
+.fab-actions .x { border: 0; background: none; color: var(--muted); font-size: 18px; cursor: pointer; line-height: 1; padding: 0 4px; }
+.fab-actions .x:hover { color: var(--accent); }
+
+.pop-save { display: flex; align-items: center; gap: 8px; }
+.pop-save img { width: 44px; height: 44px; object-fit: cover; border-radius: 4px; flex: none; }
+.pop-save .fab-name { margin-left: 0; border-color: var(--line); flex: 1; min-width: 0; }
+
+.mini-fabs { display: inline-flex; margin-left: auto; padding-left: 4px; }
+.mini-fabs img {
+  width: 18px; height: 18px; border-radius: 50%; object-fit: cover;
+  border: 1.5px solid var(--card); margin-left: -5px;
+}
+.names li .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dlg-fabs { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 4px; font: 12px var(--sans); color: var(--muted); }
+.dlg-fab { display: inline-flex; align-items: center; gap: 5px; }
+.dlg-fab .mini-fabs { margin: 0; padding: 0; }
+.dlg-fab .mini-fabs img { width: 22px; height: 22px; margin: 0; }
+.dlg-rows .nm { display: flex; flex-direction: column; align-items: flex-start; }
 .filters label { display: inline-flex; gap: 4px; align-items: center; cursor: pointer; color: var(--ink); }
 .filters input { accent-color: var(--accent); }
 
